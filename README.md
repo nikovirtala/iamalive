@@ -1,2 +1,2 @@
 # iamalive
-Small TCP connectivity test application written with Go.
+Small TCP connectivity test application written in Go.
