@@ -1,0 +1,25 @@
+version: '3.2'
+
+services:
+  iamalive:
+    image: nikovirtala/iamalive:${TAG:-latest}
+    ports:
+      - 80:80
+    networks:
+      - iamalive
+    deploy:
+      mode: global
+      endpoint_mode: vip
+      update_config:
+        parallelism: 1
+        delay: 10s
+      restart_policy:
+        condition: on-failure
+
+networks:
+  iamalive:
+    driver: overlay
+    driver_opts:
+      encrypted: "true"
+    external: false
+
