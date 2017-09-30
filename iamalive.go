@@ -13,19 +13,15 @@ import (
 func sayhello(w http.ResponseWriter, r *http.Request) {
     var name, _ = os.Hostname()
     r.ParseForm()
-    fmt.Println(r.Form)
-    fmt.Println("path", r.URL.Path)
-    fmt.Println("scheme", r.URL.Scheme)
-    fmt.Println(r.Form["url_long"])
     for k, v := range r.Form {
         fmt.Println("key:", k)
         fmt.Println("val:", strings.Join(v, ""))
     }
-    fmt.Fprintf(w, "Hello! Your request was processed by: %s", name)
+    fmt.Fprintf(w, "Hello! Your request was processed by: %s \n", name)
+    log.Print("Served request ",r,"\n")
 }
 
 func test(w http.ResponseWriter, r *http.Request) {
-    fmt.Println("method:", r.Method)
     var status string
     if r.Method == "GET" {
         t, _ := template.ParseFiles("test.gtpl")
@@ -43,10 +39,13 @@ func test(w http.ResponseWriter, r *http.Request) {
                 defer conn.Close()
         }
         fmt.Fprintf(w, destination + status)
+        log.Print("Served request ",r,"\n")
     }
 }
 
 func main() {
+  log.SetOutput(os.Stderr)
+  log.Println("Starting server ...")
     http.HandleFunc("/", sayhello)
     http.HandleFunc("/test", test)
     err := http.ListenAndServe(":80", nil)
