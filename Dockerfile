@@ -1,14 +1,14 @@
-FROM golang:alpine
+FROM golang:alpine as build
 
 ADD . /root/
 WORKDIR /root
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o iamalive .
 
-FROM alpine:latest
+FROM gcr.io/distroless/base
 LABEL maintainer "Niko Virtala <niko@nikovirtala.io>"
 
-WORKDIR /root/
-COPY --from=0 /root/iamalive .
-COPY --from=0 /root/test.gtpl .
+WORKDIR /
+COPY --from=build /root/iamalive .
+COPY --from=build /root/test.gtpl .
 EXPOSE 80
-ENTRYPOINT ["/root/iamalive"]
+ENTRYPOINT ["/iamalive"]
